@@ -6,10 +6,24 @@ export async function getCampaignById(id: string) {
   return item;
 }
 
-export async function createCampaignRecord(title: string) {
+interface CampaignPayload {
+  title: string;
+  max_count: number;
+  max_count_per_user: number;
+}
+
+export async function createCampaignRecord(payload: CampaignPayload) {
+  const {
+    title,
+    max_count,
+    max_count_per_user
+  } = payload;
+
   return new Promise((resolve, reject) => {
     const Model = new CampaignModel({
       title,
+      max_count,
+      max_count_per_user
     });
 
     Model.save((err, record) => {

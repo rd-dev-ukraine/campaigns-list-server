@@ -1,12 +1,14 @@
 import { check } from "express-validator";
 import { createCampaignRecord } from "../../services/campaignsAdmin";
 
-export const createCampaignSchema = [check("title").isLength({ min: 1 })];
+export const createCampaignSchema = [
+  check("title").isLength({ min: 1 }),
+  check("max_count").isNumeric(),
+  check("max_count_per_user").isNumeric()
+];
 
 export async function createCampaign(req: any, res: any) {
-  const { title } = req.body;
-
-  const campaign = await createCampaignRecord(title);
+  const campaign = await createCampaignRecord(req.body);
 
   res.send(campaign);
 }

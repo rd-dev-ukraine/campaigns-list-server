@@ -20,8 +20,21 @@ const CompanySchema = new Schema({
   },
   max_count_per_user: {
     type: Number,
-    default: 0,
+    default: 0
   },
+  users: {
+    type: Object,
+    default: {
+      type: Object,
+      default: {
+        views_count: 0
+      }
+    }
+  }
 });
 
-export const CampaignModel = model<ICampaignModel>("campaign", CompanySchema, 'campaigns');
+export const CampaignModel = model<ICampaignModel>(
+  "campaign",
+  CompanySchema,
+  "campaigns"
+);
