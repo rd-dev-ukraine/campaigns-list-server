@@ -10,7 +10,7 @@ class DB {
   connect() {
     mongoose.connect(
       process.env.DB_URL,
-      { useNewUrlParser: true, useUnifiedTopology: true },
+      { useNewUrlParser: true, useUnifiedTopology: true, replicaSet: process.env.RS },
       (err: any) => {
         if (err) throw err;
         console.log(`Connected to ${process.env.DB_URL}`);

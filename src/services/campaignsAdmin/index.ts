@@ -1,4 +1,8 @@
-import { CampaignModel, ICampaignPayload } from "../../repositories/campaigns";
+import {
+  CampaignModel,
+  ICampaignPayload,
+  ICampaignModel
+} from "../../repositories/campaigns";
 
 export async function getCampaignById(id: string) {
   const item = await CampaignModel.findById(id);
@@ -13,11 +17,7 @@ interface CampaignPayload {
 }
 
 export async function createCampaignRecord(payload: CampaignPayload) {
-  const {
-    title,
-    max_count,
-    max_count_per_user
-  } = payload;
+  const { title, max_count, max_count_per_user } = payload;
 
   return new Promise((resolve, reject) => {
     const Model = new CampaignModel({
@@ -35,8 +35,12 @@ export async function createCampaignRecord(payload: CampaignPayload) {
 
 export async function editCampaignById(
   id: string,
-  payload: Partial<ICampaignPayload>
+  payload: Partial<ICampaignModel>
 ) {
-  const {title, views_count} = payload;
-  return await CampaignModel.findByIdAndUpdate(id, {title, views_count},{new: true});
+  const { title, max_count, max_count_per_user } = payload;
+  return await CampaignModel.findByIdAndUpdate(
+    id,
+    { title, max_count, max_count_per_user },
+    { new: true }
+  );
 }

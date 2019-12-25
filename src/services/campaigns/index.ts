@@ -1,7 +1,26 @@
 import { CampaignModel } from "../../repositories/campaigns";
+import { DBInstance } from "../../db";
 
-export async function setCampaignViews(userId: string) {
-  const query = {
+export async function setCampaignViewsAndGetList(userId: string) {
+  const session = await DBInstance.getInstance().startSession();
+  session.startTransaction();
+  const availableCampaignsQuery = {
+    $expr: {
+      $and: [
+        {
+          $lt: [`$users.${userId}.views_count`, "$max_count_per_user"]
+        },
+        {
+          $lt: ["$views_count", "$max_count"]
+        }
+      ]
+    }
+  };
+  const campaignList = await CampaignModel.find(availableCampaignsQuery, null,{
+    session
+  });
+
+  const updateQuery = {
     $expr: {
       $and: [
         { $gt: ["$max_count_per_user", `$users.${userId}.views_count`] },
@@ -17,28 +36,11 @@ export async function setCampaignViews(userId: string) {
     }
   };
 
-  await CampaignModel.updateMany(query, upd);
+  await CampaignModel.updateMany(updateQuery, upd, { session });
+  await session.commitTransaction();
+  return campaignList;
 }
 
 export async function getCampaignsList() {
   return await CampaignModel.find({});
-}
-
-
-export async function getFilteredCampaignList(userId: string) {
-  if(!userId) throw new Error('User id is required argument');
-  const query = {
-    $expr: {
-      $and: [
-        {
-          $lt: [`$users.${userId}.views_count` , '$max_count_per_user']
-        },
-        {
-          $lt: ['$views_count', '$max_count']
-        }
-      ]
-    }
-  }
-
-  return await CampaignModel.find(query);
 }
